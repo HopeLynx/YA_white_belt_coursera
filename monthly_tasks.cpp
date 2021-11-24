@@ -70,7 +70,6 @@ void next_cmd(vector<vector<string>>& v){
     }
 }
 
-
 int main(){
     int n; cin >> n; vector<vector<string>> v;
     v.resize(days_in_month[current_month]);
