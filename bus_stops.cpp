@@ -28,3 +28,91 @@ ALL_BUSES — вывести список всех маршрутов с ост�
 Предупреждение
 Условие задачи выше содержит много важных деталей. Если вы не уверены в том, что не упустили ни одной, перечитайте условие ещё раз.
 */
+
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <iterator>
+#include <vector>
+#include <map>
+
+using namespace std;
+
+void PrintVec(const vector<string>& v){
+    for (vector<string>::const_iterator it = v.begin();it != v.end()-1;it++){
+        cout << *it << " ";
+    }
+    cout << (v.back());
+}
+
+void Buses_for_stop(const map<string,vector<string>>& busses,const string stop){
+    vector<string> v;
+    for (auto it = busses.begin(); it != busses.end(); it++) {
+        if ((*it).second.end() != find((*it).second.begin(),(*it).second.end(),stop)) v.push_back((*it).first);
+    }
+    if (!v.size()) cout << "No stop" << endl; else {PrintVec(v); cout << endl;}
+}
+
+void Stops_for_bus(const map<string,vector<string>>& busses,const string bus){
+
+    auto iter = busses.find(bus);
+    if (iter != busses.end()){
+        for (auto vit = (*iter).second.begin();vit != (*iter).second.end();vit++){
+            vector<string> v; string stop = *vit;
+            for (auto it = busses.begin(); it != busses.end(); it++) {
+                if ((*it).second.end() != find((*it).second.begin(),(*it).second.end(),stop))
+                    if (bus != (*it).first) v.push_back((*it).first);
+            }
+            if (!v.size()) cout << "Stop " << stop << ": no interchange" << endl;
+            else {cout << "Stop " << stop << ": "; PrintVec(v); cout << endl;}
+        }
+    }
+
+}
+
+// NEW_BUS bus stop_count stop1 stop2 ...
+//BUSES_FOR_STOP stop STOPS_FOR_BUS bus ALL_BUSES
+
+int main(){
+    // name -- stops
+    map<string,vector<string>> busses;
+    int n; cin >> n;
+    for(int i = 0; i < n; i++){
+        string cmd; cin >> cmd;
+        if (cmd == "NEW_BUS"){
+
+            string name; cin >> name; int tmp; cin >> tmp;
+            vector<string> v;
+            for (int i = 0; i < tmp; i++) {
+                string meme;cin >> meme;
+                v.push_back(meme);
+            }
+            busses[name] = v;
+
+        } else if (cmd == "BUSES_FOR_STOP") {
+
+            string stop; cin >> stop;
+            Buses_for_stop(busses,stop);
+
+        } else if (cmd == "STOPS_FOR_BUS") {
+
+            string bus; cin >> bus;
+            auto it = busses.find(bus);
+            if (it != busses.end()){
+                PrintVec((*it).second); cout << endl;
+            } else cout << "No bus" << endl;
+
+        } else if (cmd == "ALL_BUSES") {
+
+            if (!busses.size()) cout << "No bus" << endl;
+            else {
+                auto iter = busses.end(); advance(iter,-1);
+                for (auto it = busses.begin(); it != iter; it++) {
+                    cout << "Bus " << (*it).first << ": "; PrintVec((*it).second); cout << endl;
+                } /*iter++;*/ cout << "Bus " << (*iter).first << ": "; PrintVec((*iter).second);
+            }
+
+        }
+    }
+    return 0;
+}
