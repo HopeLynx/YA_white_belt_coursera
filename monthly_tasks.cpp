@@ -33,3 +33,52 @@ NEXT
 Для каждой операции типа DUMP в отдельной строке выведите количество дел в соответствующий день, а затем их названия, разделяя их пробелом.
 Порядок вывода дел в рамках каждой операции значения не имеет.
 */
+
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+// 1 31 2 28 3 31 4 30 5 31 6 30 7 31 8 31 9 30 10 31 11 30 12 31
+
+int current_month = 0;
+const vector<int> days_in_month = {31,28,31,30,31,30,31,31,30,31,30,31};
+void next_month(){current_month++; current_month %= 12;}
+
+void add_cmd(vector<vector<string>>& v, int k, string s){
+    v[k].push_back(s);
+}
+
+void dump_cmd(const vector<vector<string>>& v, int k){
+    cout << v[k].size() << " ";
+    for (auto it : v[k]) cout << it << " ";
+    cout << endl;
+}
+
+void next_cmd(vector<vector<string>>& v){
+    next_month();
+    int tmp = days_in_month[current_month] - v.size();
+    if (tmp > 0){
+        v.resize(days_in_month[current_month]);
+    } else if (tmp < 0){
+        for (auto it = v.end()+tmp;it != v.end();it++){
+            (*(v.end()+tmp-1)).insert((*(v.end()+tmp-1)).end(),(*it).begin(),(*it).end());
+        }
+        v.resize(days_in_month[current_month]);
+    }
+}
+
+
+int main(){
+    int n; cin >> n; vector<vector<string>> v;
+    v.resize(days_in_month[current_month]);
+    for(int i = 0; i < n; i++){
+        string cmd; cin >> cmd; int tmp; string s;
+        if (cmd == "ADD"){cin >> tmp >> s; add_cmd(v,tmp-1,s);}
+        else if (cmd == "NEXT") {next_cmd(v);}
+        else if (cmd == "DUMP"){cin >> tmp; dump_cmd(v,tmp-1);}
+    }
+    return 0;
+}
