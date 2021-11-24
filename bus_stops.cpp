@@ -45,21 +45,23 @@ void PrintVec(const vector<string>& v){
     cout << (v.back());
 }
 
-void Buses_for_stop(const map<string,vector<string>>& busses,const string stop){
+void Buses_for_stop(const map<string,vector<string>>& buses,const vector<string>& ord,const string stop){
     vector<string> v;
-    for (auto it = busses.begin(); it != busses.end(); it++) {
+    for (auto mit = ord.begin(); mit != ord.end(); mit++) {
+        auto it = buses.find(*mit);
         if ((*it).second.end() != find((*it).second.begin(),(*it).second.end(),stop)) v.push_back((*it).first);
     }
     if (!v.size()) cout << "No stop" << endl; else {PrintVec(v); cout << endl;}
 }
 
-void Stops_for_bus(const map<string,vector<string>>& busses,const string bus){
+void Stops_for_bus(const map<string,vector<string>>& buses,const vector<string>& ord,const string bus){
 
-    auto iter = busses.find(bus);
-    if (iter != busses.end()){
+    auto iter = buses.find(bus);
+    if (iter != buses.end()){
         for (auto vit = (*iter).second.begin();vit != (*iter).second.end();vit++){
             vector<string> v; string stop = *vit;
-            for (auto it = busses.begin(); it != busses.end(); it++) {
+            for (auto mit = ord.begin(); mit != ord.end(); mit++) {
+                auto it = buses.find(*mit);
                 if ((*it).second.end() != find((*it).second.begin(),(*it).second.end(),stop))
                     if (bus != (*it).first) v.push_back((*it).first);
             }
@@ -72,43 +74,41 @@ void Stops_for_bus(const map<string,vector<string>>& busses,const string bus){
 
 }
 
-// NEW_BUS bus stop_count stop1 stop2 ...
-//BUSES_FOR_STOP stop STOPS_FOR_BUS bus ALL_BUSES
-
 int main(){
     // name -- stops
-    map<string,vector<string>> busses;
+    map<string,vector<string>> buses; vector<string> ordered_buses;
     int n; cin >> n;
     for(int i = 0; i < n; i++){
         string cmd; cin >> cmd;
         if (cmd == "NEW_BUS"){
 
             string name; cin >> name; int tmp; cin >> tmp;
+            ordered_buses.push_back(name);
             vector<string> v;
             for (int i = 0; i < tmp; i++) {
                 string meme;cin >> meme;
                 v.push_back(meme);
             }
-            busses[name] = v;
+            buses[name] = v;
 
         } else if (cmd == "BUSES_FOR_STOP") {
 
             string stop; cin >> stop;
-            Buses_for_stop(busses,stop);
+            Buses_for_stop(buses,ordered_buses,stop);
 
         } else if (cmd == "STOPS_FOR_BUS") {
 
             string bus; cin >> bus;
-            Stops_for_bus(busses,bus);
+            Stops_for_bus(buses,ordered_buses,bus);
 
         } else if (cmd == "ALL_BUSES") {
 
-            if (!busses.size()) cout << "No buses" << endl;
+            if (!buses.size()) cout << "No buses" << endl;
             else {
-                auto iter = busses.end(); advance(iter,-1);
-                for (auto it = busses.begin(); it != iter; it++) {
+                auto iter = buses.end(); advance(iter,-1);
+                for (auto it = buses.begin(); it != buses.end(); it++) {
                     cout << "Bus " << (*it).first << ": "; PrintVec((*it).second); cout << endl;
-                } /*iter++;*/ cout << "Bus " << (*iter).first << ": "; PrintVec((*iter).second);
+                }
             }
 
         }
