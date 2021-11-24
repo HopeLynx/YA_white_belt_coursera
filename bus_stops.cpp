@@ -66,6 +66,8 @@ void Stops_for_bus(const map<string,vector<string>>& busses,const string bus){
             if (!v.size()) cout << "Stop " << stop << ": no interchange" << endl;
             else {cout << "Stop " << stop << ": "; PrintVec(v); cout << endl;}
         }
+    } else {
+        cout << "No bus" << endl;
     }
 
 }
@@ -97,14 +99,11 @@ int main(){
         } else if (cmd == "STOPS_FOR_BUS") {
 
             string bus; cin >> bus;
-            auto it = busses.find(bus);
-            if (it != busses.end()){
-                PrintVec((*it).second); cout << endl;
-            } else cout << "No bus" << endl;
+            Stops_for_bus(busses,bus);
 
         } else if (cmd == "ALL_BUSES") {
 
-            if (!busses.size()) cout << "No bus" << endl;
+            if (!busses.size()) cout << "No buses" << endl;
             else {
                 auto iter = busses.end(); advance(iter,-1);
                 for (auto it = busses.begin(); it != iter; it++) {
@@ -116,3 +115,4 @@ int main(){
     }
     return 0;
 }
+
